@@ -118,6 +118,8 @@ class AnnotationFactory {
             return new ButtonWidgetAnnotation(parameters);
           case "Ch":
             return new ChoiceWidgetAnnotation(parameters);
+          case "Sig": // FAKE
+            return new FreeTextAnnotation(parameters);
         }
         warn(
           'Unimplemented widget field type "' +
