@@ -119,7 +119,12 @@ class AnnotationFactory {
           case "Ch":
             return new ChoiceWidgetAnnotation(parameters);
           case "Sig": // FAKE
-            return new FreeTextAnnotation(parameters);
+            let fakeAnnotation = new FreeTextAnnotation(parameters);
+            let vDict = getInheritableProperty({ dict, key: "V" });
+            fakeAnnotation.data.creationDate = isString(vDict.get("M")) ? vDict.get("M") : null;
+            fakeAnnotation.data.modificationDate = fakeAnnotation.data.creationDate;
+            fakeAnnotation.data.contents = stringToPDFString(vDict.get("Name") || "");
+            return fakeAnnotation;
         }
         warn(
           'Unimplemented widget field type "' +
