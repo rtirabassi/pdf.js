@@ -269,6 +269,13 @@ const PDFViewerApplication = {
     this._forceCssTheme();
     await this._initializeL10n();
 
+    // Trick. Overwrite textLayerMode configuration
+    const queryString = document.location.search.substring(1);
+    const params = parseQueryString(queryString);
+    let textLayerMode = "textlayermode" in params ? Number(params.textlayermode) : AppOptions.get("textLayerMode");
+    AppOptions.set("textLayerMode", textLayerMode);
+    this.appConfig.textLayerMode = textLayerMode;
+
     if (
       this.isViewerEmbedded &&
       AppOptions.get("externalLinkTarget") === LinkTarget.NONE
