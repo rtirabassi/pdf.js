@@ -269,12 +269,24 @@ const PDFViewerApplication = {
     this._forceCssTheme();
     await this._initializeL10n();
 
-    // Trick. Overwrite textLayerMode configuration
-    const queryString = document.location.search.substring(1);
-    const params = parseQueryString(queryString);
-    let textLayerMode = "textlayermode" in params ? Number(params.textlayermode) : AppOptions.get("textLayerMode");
-    AppOptions.set("textLayerMode", textLayerMode);
-    this.appConfig.textLayerMode = textLayerMode;
+    // Trick. Add dynamic parameters
+    let dynConfig = null;
+    if ( "pdfjsconfig" in document ) {
+      dynConfig = document.pdfjsconfig;
+    }
+    else if ( parent != null && "pdfjsconfig" in parent ) {
+      dynConfig = parent.pdfjsconfig;
+    }
+    if ( dynConfig != null ) {
+      if ( "textLayerMode" in dynConfig ) {
+        AppOptions.set("textLayerMode", dynConfig.textLayerMode);
+        this.appConfig.textLayerMode = dynConfig.textLayerMode;
+      }
+      if ( "hideOpenFile" in dynConfig && dynConfig.hideOpenFile ) {
+        this.appConfig.toolbar.openFile.setAttribute("hidden", "true");
+        this.appConfig.secondaryToolbar.openFileButton.setAttribute("hidden", "true");
+      }
+    }
 
     if (
       this.isViewerEmbedded &&
